@@ -250,39 +250,26 @@ def tower_rec(b, h, m):
 
 
 
-# b = 445
-# h = 10000
-# m = 53667
-
-# for m in range(1, 20):
-    # print(get_totient(m))
-
-# 1/0
 
 
 m = 1001
 t_3_3 = 3 ** 3 ** 3
 t_3_4 = pow(3, t_3_3, m)
-# test.assert_equals(tower(3, 4, m), t_3_4)
-
-
-
 
 t_2_4 = pow(2, 2 ** 2 ** 2)
 t_2_5 = pow(2, t_2_4, 720)
 t_2_6 = pow(2, 720 + t_2_5, m)
-# test.assert_equals(tower(2, 6, m), t_2_6)
-
 
 
 # Format is (b, h, m, result)
 tests = [
     (4, 3, 10, 6),
     (2, 2, 1000, 4),
-    (2, 3, 100000, 16)
+    (2, 3, 100000, 16),
+    (7, 1, 5, 2),
+    (3, 4, 1001, t_3_4),
+    (2, 6, 1001, t_2_6)
     ]
-
-
 
 
 t.reset()
