@@ -133,66 +133,66 @@ def tower_naive(b, h, m):
     return res
 
 
-def tower (b, h, m):
-    if m == 1:
-        return 0
+# def tower (b, h, m):
+    # if m == 1:
+        # return 0
 
-    if b == 1 or h == 0:
-        return 1
+    # if b == 1 or h == 0:
+        # return 1
 
-    if h == 1:
-        return b % m
+    # if h == 1:
+        # return b % m
 
-    totient = get_totient(m)
-    sm = m * totient // gcd(m, totient)
+    # totient = get_totient(m)
+    # sm = m * totient // gcd(m, totient)
 
-    pos = [b % sm]
+    # pos = [b % sm]
 
-    h -= 1
-    initial = 0
-    while h > 0:
-        a = fast_exp(b, pos[-1] % sm, sm)
-        pos.append(a)
-        initial += 1
-        h -= 1
-        if a >= m:
-            break
+    # h -= 1
+    # initial = 0
+    # while h > 0:
+        # a = fast_exp(b, pos[-1] % sm, sm)
+        # pos.append(a)
+        # initial += 1
+        # h -= 1
+        # if a >= m:
+            # break
 
-    if h == 0:
-        return pos[-1] % m
+    # if h == 0:
+        # return pos[-1] % m
 
-    print(pos)
-
-
-    a = fast_exp(b, pos[-1] % sm, sm)
-    pos.append(a)
-    initial += 1
-    h -= 1
-
-
-
-
-    start = pos[-1]
-    cycle_length = 0
-    while True:
-        a = fast_exp(b, pos[-1] % sm, sm)
-        cycle_length += 1
-        if a == start:
-            break
-        pos.append(a)
-
-    # print("%%%%%%%%%%%%%%%%%%")
-    # print(cycle_length)
     # print(pos)
 
 
-    h -= initial
-    h %= cycle_length
-    h += initial
+    # a = fast_exp(b, pos[-1] % sm, sm)
+    # pos.append(a)
+    # initial += 1
+    # h -= 1
 
-    # print(pos[h] % m)
 
-    return pos[h] % m
+
+
+    # start = pos[-1]
+    # cycle_length = 0
+    # while True:
+        # a = fast_exp(b, pos[-1] % sm, sm)
+        # cycle_length += 1
+        # if a == start:
+            # break
+        # pos.append(a)
+
+    # # print("%%%%%%%%%%%%%%%%%%")
+    # # print(cycle_length)
+    # # print(pos)
+
+
+    # h -= initial
+    # h %= cycle_length
+    # h += initial
+
+    # # print(pos[h] % m)
+
+    # return pos[h] % m
 
 
     # See how fast we cycle through the same exponents
@@ -220,11 +220,13 @@ def tower (b, h, m):
 
 
 def tower(b, h, m):
+    print(b)
+    print(h)
+    print(m)
     return tower_rec(b, h, m)
 
 
 def tower_rec(b, h, m):
-    # print(m)
     if m == 1:
         return 0
 
@@ -234,7 +236,15 @@ def tower_rec(b, h, m):
     if h == 1:
         return b % m
 
-    return pow(b, tower_rec(b, h - 1, get_totient(m)), m)
+    totient = get_totient(m)
+    # b = b % m
+
+    previous = tower_rec(b, h - 1, totient)
+
+    if gcd(b, m) == 1 and previous >= totient:
+        return pow(b, previous, m)
+    else:
+        return ( pow(b, previous, m) * pow(b, totient, m) ) % m
 
 
 
@@ -265,18 +275,23 @@ t_2_6 = pow(2, 720 + t_2_5, m)
 
 
 
+# Format is (b, h, m, result)
+tests = [
+    (4, 3, 10, 6),
+    (2, 2, 1000, 4),
+    (2, 3, 100000, 16)
+    ]
+
+
+
 
 t.reset()
 
-# res = tower_naive(2, 6, 1001)
-# print(res)
 
-# res = tower(3, 3, 1546)
-res = tower(4, 3, 10)   # Should equal 6
-# res = tower(3, 3, 25)
-# res = tower_rec(3, 3, 25)
+for b, h, m, result in tests:
+    res = tower(b, h, m)
+    print(f"{res} should be equal to {result}")
 
-print(res)
 
 
 t.time("Towered")
