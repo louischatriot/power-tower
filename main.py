@@ -14,6 +14,33 @@ class Timer():
 t = Timer()
 
 
+# Iterative version slightly faster
+# But Python's pow better than both
+def fast_exp(b, n, m):
+    if n == 0:
+        return 1
+
+    b %= m
+
+    exps = []
+    while n > 0:
+        if n % 2 == 0:
+            exps.append(0)
+            n //= 2
+        else:
+            exps.append(1)
+            n -= 1
+
+    res = 1
+    for i in reversed(exps):
+        if i == 1:
+            res = (res * b) %m
+        else:
+            res = (res ** 2) % m
+
+    return res
+
+
 
 
 
@@ -79,6 +106,9 @@ def get_totient(n):
     if n == 3:
         return 2
 
+    if n % 2 == 0:
+        return 2 * get_totient(n // 2)
+
     for i in primes:
         if i > n:
             break
@@ -89,41 +119,6 @@ def get_totient(n):
     return int(res)
 
 
-# Iterative version slightly faster
-def fast_exp(b, n, m):
-    if n == 0:
-        return 1
-
-    b %= m
-
-    exps = []
-    while n > 0:
-        if n % 2 == 0:
-            exps.append(0)
-            n //= 2
-        else:
-            exps.append(1)
-            n -= 1
-
-    res = 1
-    for i in reversed(exps):
-        if i == 1:
-            res = (res * b) %m
-        else:
-            res = (res ** 2) % m
-
-    return res
-
-    # if n == 1:
-        # return b
-
-    # if n % 2 == 0:
-        # return ((fast_exp(b, n // 2) % m) ** 2) % m
-    # else:
-        # return ((b % m) * (fast_exp(b, n - 1) % m)) % m
-
-
-
 def tower_naive(b, h, m):
     res = b
     for i in range(0, h - 1):
@@ -131,92 +126,6 @@ def tower_naive(b, h, m):
 
     res = res % m
     return res
-
-
-# def tower (b, h, m):
-    # if m == 1:
-        # return 0
-
-    # if b == 1 or h == 0:
-        # return 1
-
-    # if h == 1:
-        # return b % m
-
-    # totient = get_totient(m)
-    # sm = m * totient // gcd(m, totient)
-
-    # pos = [b % sm]
-
-    # h -= 1
-    # initial = 0
-    # while h > 0:
-        # a = fast_exp(b, pos[-1] % sm, sm)
-        # pos.append(a)
-        # initial += 1
-        # h -= 1
-        # if a >= m:
-            # break
-
-    # if h == 0:
-        # return pos[-1] % m
-
-    # print(pos)
-
-
-    # a = fast_exp(b, pos[-1] % sm, sm)
-    # pos.append(a)
-    # initial += 1
-    # h -= 1
-
-
-
-
-    # start = pos[-1]
-    # cycle_length = 0
-    # while True:
-        # a = fast_exp(b, pos[-1] % sm, sm)
-        # cycle_length += 1
-        # if a == start:
-            # break
-        # pos.append(a)
-
-    # # print("%%%%%%%%%%%%%%%%%%")
-    # # print(cycle_length)
-    # # print(pos)
-
-
-    # h -= initial
-    # h %= cycle_length
-    # h += initial
-
-    # # print(pos[h] % m)
-
-    # return pos[h] % m
-
-
-    # See how fast we cycle through the same exponents
-    # for i in range(0, 10):
-        # a = fast_exp(b, pos[-1] % sm, sm)
-        # # if a == start:
-            # # break
-        # pos.append(a)
-
-    # cycle_length = len(pos) + 1
-
-
-    # print("===========================")
-    # print(len(pos))
-    # print(pos)
-
-    # pos = [i % m for i in pos]
-
-    # print(pos)
-
-
-    # res = pos[h % cycle_length] % m
-
-    # return res
 
 
 def tower(b, h, m):
@@ -233,10 +142,14 @@ def tower_rec(b, h, m):
     if h == 1:
         return b % m
 
+    # if m == 2:
+        # return b % 2
+
+    # if h == 2:
+        # return pow(b, 2, m)
+
     totient = get_totient(m)
-
     previous = tower_rec(b, h - 1, totient)
-
 
     temp = 1
     large = False
@@ -274,7 +187,8 @@ tests = [
     (2, 3, 100000, 16),
     (7, 1, 5, 2),
     (3, 4, 1001, t_3_4),
-    (2, 6, 1001, t_2_6)
+    (2, 6, 1001, t_2_6),
+    (35274318940391579706, 72714099242717105322, 7808487, 7475019)
     ]
 
 
